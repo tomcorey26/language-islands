@@ -64,6 +64,17 @@ function App() {
   }
 
   function toggleHideTranslation(id: string) {
+    const flashCard = flashCards.find((flashCard) => flashCard.id === id);
+
+    if (flashCard?.translationHidden === true) {
+      const msg = new SpeechSynthesisUtterance(flashCard.translation);
+      const voices = window.speechSynthesis.getVoices();
+      msg.voice = voices.filter(function (voice) {
+        return voice.lang == 'es-ES';
+      })[0];
+      window.speechSynthesis.speak(msg);
+    }
+
     setFlashCards((prev) =>
       prev.map((flashCard) =>
         flashCard.id === id
