@@ -10,17 +10,23 @@ import { Button } from '@/components/ui/button';
 // 4) Form adds it to the list
 // 5) On click you can hear the pronunciation of the sentence
 
+// list will be saved in local storage
+// import from excel
+// Can create different lists for different langauge areas
+// Toggle all translations to be hidden
+
 // Strech goals:
 // Have it translate to other languages automatically
 
 interface FlashCard {
   english: string;
   translation: string;
+  translationHidden: boolean;
 }
 
 function App() {
   const [flashCards, setFlashCards] = useState<FlashCard[]>([
-    { english: 'hello', translation: 'hola' },
+    { english: 'hello', translation: 'hola', translationHidden: false },
   ]);
   const [english, setEnglish] = useState('');
   const [translation, setTranslation] = useState('');
@@ -30,11 +36,24 @@ function App() {
       {
         english,
         translation,
+        translationHidden: false,
       },
       ...flashCards,
     ]);
     setEnglish('');
     setTranslation('');
+  }
+
+  function hideAllTranslations() {
+    setFlashCards((prev) =>
+      prev.map((flashCard) => ({ ...flashCard, translationHidden: true }))
+    );
+  }
+
+  function showAllTranslations() {
+    setFlashCards((prev) =>
+      prev.map((flashCard) => ({ ...flashCard, translationHidden: false }))
+    );
   }
 
   return (
@@ -50,13 +69,27 @@ function App() {
           value={translation}
           onChange={(e) => setTranslation(e.target.value)}
         />
-        <Button onClick={addFlashCard} className="col-span-2">
+        <Button onClick={addFlashCard} className="col-span-2 mb-4">
           Add
         </Button>
+        <div className="col-span-2 mb-6">
+          <Button className="mx-2" onClick={hideAllTranslations}>
+            Hide All Translations
+          </Button>
+          <Button
+            className="mx-2"
+            variant={'secondary'}
+            onClick={showAllTranslations}
+          >
+            Show All Translations
+          </Button>
+        </div>
         {flashCards.map((flashCard) => (
           <>
             <Card>{flashCard.english}</Card>
-            <Card>{flashCard.translation}</Card>
+            <Card>
+              {flashCard.translationHidden ? '' : flashCard.translation}
+            </Card>
           </>
         ))}
       </div>
