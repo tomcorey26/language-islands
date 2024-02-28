@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 // Have it translate to other languages automatically
 
 interface FlashCard {
+  id: string;
   english: string;
   translation: string;
   translationHidden: boolean;
@@ -26,7 +27,12 @@ interface FlashCard {
 
 function App() {
   const [flashCards, setFlashCards] = useState<FlashCard[]>([
-    { english: 'hello', translation: 'hola', translationHidden: false },
+    {
+      id: '2232',
+      english: 'hello',
+      translation: 'hola',
+      translationHidden: false,
+    },
   ]);
   const [english, setEnglish] = useState('');
   const [translation, setTranslation] = useState('');
@@ -37,6 +43,7 @@ function App() {
         english,
         translation,
         translationHidden: false,
+        id: crypto.randomUUID(),
       },
       ...flashCards,
     ]);
@@ -53,6 +60,16 @@ function App() {
   function showAllTranslations() {
     setFlashCards((prev) =>
       prev.map((flashCard) => ({ ...flashCard, translationHidden: false }))
+    );
+  }
+
+  function toggleHideTranslation(id: string) {
+    setFlashCards((prev) =>
+      prev.map((flashCard) =>
+        flashCard.id === id
+          ? { ...flashCard, translationHidden: !flashCard.translationHidden }
+          : flashCard
+      )
     );
   }
 
@@ -87,7 +104,10 @@ function App() {
         {flashCards.map((flashCard) => (
           <>
             <Card>{flashCard.english}</Card>
-            <Card>
+            <Card
+              className="cursor-pointer"
+              onClick={() => toggleHideTranslation(flashCard.id)}
+            >
               {flashCard.translationHidden ? '' : flashCard.translation}
             </Card>
           </>
