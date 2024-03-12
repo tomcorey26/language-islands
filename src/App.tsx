@@ -3,6 +3,8 @@ import './App.css';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import React from 'react';
 
 // Features:
 // 1) Form to add a new line item. English and spanish translation
@@ -17,6 +19,11 @@ import { Button } from '@/components/ui/button';
 
 // Strech goals:
 // Have it translate to other languages automatically
+
+type Inputs = {
+  english: string;
+  translation: string;
+};
 
 interface FlashCard {
   id: string;
@@ -34,10 +41,13 @@ function App() {
       translationHidden: false,
     },
   ]);
-  const [english, setEnglish] = useState('');
-  const [translation, setTranslation] = useState('');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>();
 
-  function addFlashCard() {
+  function addFlashCard(english: string, translation: string) {
     setFlashCards([
       {
         english,
@@ -47,9 +57,12 @@ function App() {
       },
       ...flashCards,
     ]);
-    setEnglish('');
-    setTranslation('');
   }
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log(data);
+    addFlashCard(data.english, data.translation);
+  };
 
   function hideAllTranslations() {
     setFlashCards((prev) =>
@@ -87,19 +100,30 @@ function App() {
   return (
     <div>
       <div className="grid grid-cols-2 gap-4">
-        <Input
-          placeholder="English"
-          value={english}
-          onChange={(e) => setEnglish(e.target.value)}
-        />
-        <Input
-          placeholder="Translation"
-          value={translation}
-          onChange={(e) => setTranslation(e.target.value)}
-        />
-        <Button onClick={addFlashCard} className="col-span-2 mb-4">
-          Add
-        </Button>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid grid-cols-2 gap-4 col-span-2"
+        >
+          <div className="col-span-1">
+            <Input
+              placeholder="English"
+              {...register('english', { required: true })}
+            />
+            {errors.english && (
+              <p className="text-red-500 text-left">English is required</p>
+            )}
+          </div>
+          <div className="col-span-1">
+            <Input
+              placeholder="Translation"
+              {...register('translation', { required: true })}
+            />
+            {errors.translation && (
+              <p className="text-red-500 text-left">Translation is required</p>
+            )}
+          </div>
+          <Button className="col-span-2 mb-4">Add</Button>
+        </form>
         <div className="col-span-2 mb-6">
           <Button className="mx-2" onClick={hideAllTranslations}>
             Hide All Translations
@@ -113,7 +137,7 @@ function App() {
           </Button>
         </div>
         {flashCards.map((flashCard) => (
-          <>
+          <React.Fragment key={flashCard.id}>
             <Card>{flashCard.english}</Card>
             <Card
               className="cursor-pointer"
@@ -121,7 +145,7 @@ function App() {
             >
               {flashCard.translationHidden ? '' : flashCard.translation}
             </Card>
-          </>
+          </React.Fragment>
         ))}
       </div>
     </div>
