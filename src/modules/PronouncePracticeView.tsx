@@ -1,5 +1,5 @@
 import { speakSpanish } from '@/services/TextToSpeechService';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 interface PronouncePracticeViewProps {
   flashCards: FlashCard[];
@@ -12,36 +12,72 @@ const PronouncePracticeView: React.FC<PronouncePracticeViewProps> = ({
 }) => {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
-  function handleNextCard() {
+  const handleNextCard = useCallback(() => {
     if (currentCardIndex === flashCards.length - 1) {
       setCurrentCardIndex(0);
     } else {
       setCurrentCardIndex(currentCardIndex + 1);
     }
-  }
+  }, [currentCardIndex, flashCards]);
 
-  function handlePreviousCard() {
+  const handlePreviousCard = useCallback(() => {
     if (currentCardIndex === 0) {
       setCurrentCardIndex(flashCards.length - 1);
     } else {
       setCurrentCardIndex(currentCardIndex - 1);
     }
-  }
+  }, [currentCardIndex, flashCards]);
 
-  function handleExit() {
+  const handleExit = useCallback(() => {
     setView('edit');
-  }
+  }, [setView]);
 
-  function handlePlayAudio() {
+  const handlePlayAudio = useCallback(() => {
     speakSpanish(flashCards[currentCardIndex].translation);
-  }
+  }, [currentCardIndex, flashCards]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'ArrowRight':
+          handleNextCard();
+          break;
+        case 'ArrowLeft':
+          handlePreviousCard();
+          break;
+        case 'Escape':
+          handleExit();
+          break;
+        case ' ':
+          handlePlayAudio();
+          break;
+        default:
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [
+    currentCardIndex,
+    flashCards,
+    handleNextCard,
+    handlePreviousCard,
+    handleExit,
+    handlePlayAudio,
+  ]);
 
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="bg-gray-200 rounded-lg p-8 w-3/4 h-2/4">
         <div className="flex flex-col justify-between h-full">
-          <div className="text-center mb-4">
-            <h1 className="text-2xl font-bold">Pronounce Practice</h1>
+          <div className="flex justify-end">
+            <button className="text-xl font-bold" onClick={handleExit}>
+              X
+            </button>
           </div>
           <div className="text-center mb-4">
             <h2 className="text-xl font-bold">
