@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import './App.css';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import React from 'react';
+import useLocalStorage from '@/hooks/useLocalStorage';
 
 // Features:
 // 1) Form to add a new line item. English and spanish translation
@@ -18,7 +18,7 @@ import React from 'react';
 // Toggle all translations to be hidden
 
 // Strech goals:
-// Have it translate to other languages automatically
+// Have it translate to other languages automatically, e.g show suggestions that the user can click on
 
 type Inputs = {
   english: string;
@@ -33,14 +33,7 @@ interface FlashCard {
 }
 
 function App() {
-  const [flashCards, setFlashCards] = useState<FlashCard[]>([
-    {
-      id: '2232',
-      english: 'hello',
-      translation: 'hola',
-      translationHidden: false,
-    },
-  ]);
+  const [flashCards, setFlashCards] = useLocalStorage<FlashCard[]>('cards', []);
   const {
     register,
     handleSubmit,
@@ -60,7 +53,6 @@ function App() {
   }
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
     addFlashCard(data.english, data.translation);
   };
 
