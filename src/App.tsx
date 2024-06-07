@@ -2,6 +2,8 @@ import FlashcardEditView from '@/modules/FlashcardEditView';
 import './App.css';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { useState } from 'react';
+import PronouncePracticeView from '@/modules/PronouncePracticeView';
+import { speakSpanish } from '@/services/TextToSpeechService';
 
 // Features:
 // import from excel
@@ -43,12 +45,7 @@ function App() {
     const flashCard = flashCards.find((flashCard) => flashCard.id === id);
 
     if (flashCard?.translationHidden === true) {
-      const msg = new SpeechSynthesisUtterance(flashCard.translation);
-      const voices = window.speechSynthesis.getVoices();
-      msg.voice = voices.filter(function (voice) {
-        return voice.lang == 'es-ES';
-      })[0];
-      window.speechSynthesis.speak(msg);
+      speakSpanish(flashCard.translation);
     }
 
     setFlashCards((prev) =>
@@ -61,7 +58,7 @@ function App() {
   }
 
   if (view === 'practice-pronounce') {
-    return <div>Practice Pronounce</div>;
+    return <PronouncePracticeView flashCards={flashCards} setView={setView} />;
   }
 
   return (
