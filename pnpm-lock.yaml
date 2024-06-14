@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@radix-ui/react-slot': ^1.0.2
   '@types/node': ^20.11.22
+  '@types/papaparse': ^5.3.14
   '@types/react': ^18.2.56
   '@types/react-dom': ^18.2.19
   '@typescript-eslint/eslint-plugin': ^7.0.2
@@ -15,6 +16,7 @@ specifiers:
   eslint-plugin-react-hooks: ^4.6.0
   eslint-plugin-react-refresh: ^0.4.5
   lucide-react: ^0.343.0
+  papaparse: ^5.4.1
   postcss: ^8.4.35
   react: ^18.2.0
   react-dom: ^18.2.0
@@ -30,6 +32,7 @@ dependencies:
   class-variance-authority: 0.7.0
   clsx: 2.1.0
   lucide-react: 0.343.0_react@18.2.0
+  papaparse: 5.4.1
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-hook-form: 7.51.0_react@18.2.0
@@ -38,6 +41,7 @@ dependencies:
 
 devDependencies:
   '@types/node': 20.11.22
+  '@types/papaparse': 5.3.14
   '@types/react': 18.2.60
   '@types/react-dom': 18.2.19
   '@typescript-eslint/eslint-plugin': 7.1.0_dvc3ospnkwz4tsyaoocmvwzvo4
@@ -662,6 +666,12 @@ packages:
     resolution: {integrity: sha512-/G+IxWxma6V3E+pqK1tSl2Fo1kl41pK1yeCyDsgkF9WlVAme4j5ISYM2zR11bgLFJGLN5sVK40T4RJNuiZbEjA==}
     dependencies:
       undici-types: 5.26.5
+    dev: true
+
+  /@types/papaparse/5.3.14:
+    resolution: {integrity: sha512-LxJ4iEFcpqc6METwp9f6BV6VVc43m6MfH0VqFosHvrUgfXiFe6ww7R3itkOQ+TCK6Y+Iv/+RnnvtRZnkc5Kc9g==}
+    dependencies:
+      '@types/node': 20.11.22
     dev: true
 
   /@types/prop-types/15.7.11:
@@ -1649,6 +1659,10 @@ packages:
     dependencies:
       p-limit: 3.1.0
     dev: true
+
+  /papaparse/5.4.1:
+    resolution: {integrity: sha512-HipMsgJkZu8br23pW15uvo6sib6wne/4woLZPlFf3rpDyMe9ywEXUsuD7+6K9PRkJlVT51j/sCOYDKGGS3ZJrw==}
+    dev: false
 
   /parent-module/1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}

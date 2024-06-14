@@ -57,6 +57,18 @@ function App() {
     );
   }
 
+  function onUpload(data: CsvUploadResult) {
+    setFlashCards([
+      ...data.map(([english, translation]) => ({
+        english,
+        translation,
+        translationHidden: false,
+        id: crypto.randomUUID(),
+      })),
+      ...flashCards,
+    ]);
+  }
+
   if (view === 'practice-pronounce') {
     return <PronouncePracticeView flashCards={flashCards} setView={setView} />;
   }
@@ -70,6 +82,7 @@ function App() {
         showAllTranslations={showAllTranslations}
         toggleHideTranslation={toggleHideTranslation}
         setView={setView}
+        onUpload={onUpload}
       />
     </div>
   );

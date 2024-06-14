@@ -6,3 +6,5 @@ interface FlashCard {
 }
 
 type PageViews = 'edit' | 'practice-pronounce';
+
+type CsvUploadResult = Array<[string, string]>;

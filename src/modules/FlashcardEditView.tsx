@@ -1,3 +1,4 @@
+import { CsvUploader } from '@/components/CsvUploader';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,6 +17,7 @@ interface FlashcardEditViewProps {
   showAllTranslations: () => void;
   toggleHideTranslation: (id: string) => void;
   setView: (view: PageViews) => void;
+  onUpload: (data: CsvUploadResult) => void;
 }
 
 const FlashcardEditView: React.FC<FlashcardEditViewProps> = ({
@@ -25,6 +27,7 @@ const FlashcardEditView: React.FC<FlashcardEditViewProps> = ({
   showAllTranslations,
   toggleHideTranslation,
   setView,
+  onUpload,
 }) => {
   const {
     register,
@@ -81,6 +84,7 @@ const FlashcardEditView: React.FC<FlashcardEditViewProps> = ({
         >
           Pronunciation Mode
         </Button>
+        <CsvUploader onUpload={onUpload} />
       </div>
       {flashCards.map((flashCard) => (
         <React.Fragment key={flashCard.id}>
