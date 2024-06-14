@@ -1,3 +1,9 @@
+interface Deck {
+  id: string;
+  name: string;
+  flashCards: FlashCard[];
+}
+
 interface FlashCard {
   id: string;
   english: string;
@@ -5,6 +11,6 @@ interface FlashCard {
   translationHidden: boolean;
 }
 
-type PageViews = 'edit' | 'practice-pronounce';
+type PageViews = 'decks' | 'edit' | 'practice-pronounce';
 
 type CsvUploadResult = Array<[string, string]>;

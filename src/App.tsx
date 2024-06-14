@@ -1,43 +1,83 @@
 import FlashcardEditView from '@/modules/FlashcardEditView';
 import './App.css';
 import useLocalStorage from '@/hooks/useLocalStorage';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import PronouncePracticeView from '@/modules/PronouncePracticeView';
 import { speakSpanish } from '@/services/TextToSpeechService';
+import DecksView from '@/modules/DecksView';
 
 // Features:
-// import from excel
-// Can create different lists for different langauge areas
+// Can create different decks for different langauge areas
 // Toggle all translations to be hidden
+
+// Add routing
 
 // Strech goals:
 // Have it translate to other languages automatically, e.g show suggestions that the user can click on
 
 function App() {
-  const [flashCards, setFlashCards] = useLocalStorage<FlashCard[]>('cards', []);
-  const [view, setView] = useState<PageViews>('edit');
+  const [view, setView] = useState<PageViews>('decks');
+
+  const [decks, setDecks] = useLocalStorage<Deck[]>('decks', [
+    {
+      id: crypto.randomUUID(),
+      name: 'Default deck',
+      flashCards: [],
+    },
+  ]);
+  const [currentDeckId, setCurrentDeckId] = useLocalStorage<string>(
+    'currentDeckId',
+    decks[0]?.id
+  );
+  const flashCards = useMemo(
+    () => decks.find((deck) => deck.id === currentDeckId)?.flashCards ?? [],
+    [decks, currentDeckId]
+  );
 
   function addFlashCard(english: string, translation: string) {
-    setFlashCards([
-      {
-        english,
-        translation,
-        translationHidden: false,
-        id: crypto.randomUUID(),
-      },
-      ...flashCards,
-    ]);
+    setDecks((prev) => {
+      return prev.map((deck) => {
+        if (deck.id === currentDeckId) {
+          return {
+            ...deck,
+            flashCards: [
+              {
+                english,
+                translation,
+                translationHidden: false,
+                id: crypto.randomUUID(),
+              },
+              ...deck.flashCards,
+            ],
+          };
+        }
+
+        return deck;
+      });
+    });
   }
 
   function hideAllTranslations() {
-    setFlashCards((prev) =>
-      prev.map((flashCard) => ({ ...flashCard, translationHidden: true }))
+    setDecks((prev) =>
+      prev.map((deck) => ({
+        ...deck,
+        flashCards: deck.flashCards.map((flashCard) => ({
+          ...flashCard,
+          translationHidden: true,
+        })),
+      }))
     );
   }
 
   function showAllTranslations() {
-    setFlashCards((prev) =>
-      prev.map((flashCard) => ({ ...flashCard, translationHidden: false }))
+    setDecks((prev) =>
+      prev.map((deck) => ({
+        ...deck,
+        flashCards: deck.flashCards.map((flashCard) => ({
+          ...flashCard,
+          translationHidden: false,
+        })),
+      }))
     );
   }
 
@@ -48,25 +88,55 @@ function App() {
       speakSpanish(flashCard.translation);
     }
 
-    setFlashCards((prev) =>
-      prev.map((flashCard) =>
-        flashCard.id === id
-          ? { ...flashCard, translationHidden: !flashCard.translationHidden }
-          : flashCard
-      )
+    setDecks((prev) =>
+      prev.map((deck) => ({
+        ...deck,
+        flashCards: deck.flashCards.map((flashCard) =>
+          flashCard.id === id
+            ? { ...flashCard, translationHidden: !flashCard.translationHidden }
+            : flashCard
+        ),
+      }))
     );
   }
 
   function onUpload(data: CsvUploadResult) {
-    setFlashCards([
-      ...data.map(([english, translation]) => ({
-        english,
-        translation,
-        translationHidden: false,
-        id: crypto.randomUUID(),
-      })),
-      ...flashCards,
-    ]);
+    setDecks((prev) =>
+      prev.map((deck) => ({
+        ...deck,
+        flashCards: [
+          ...data.map(([english, translation]) => ({
+            english,
+            translation,
+            translationHidden: false,
+            id: crypto.randomUUID(),
+          })),
+          ...deck.flashCards,
+        ],
+      }))
+    );
+  }
+
+  function createNewDeck() {
+    const newDeck = {
+      id: crypto.randomUUID(),
+      name: 'New deck',
+      flashCards: [],
+    };
+
+    setDecks([...decks, newDeck]);
+    setCurrentDeckId(newDeck.id);
+  }
+
+  if (view === 'decks') {
+    return (
+      <DecksView
+        decks={decks}
+        setCurrentDeckId={setCurrentDeckId}
+        createNewDeck={createNewDeck}
+        setView={setView}
+      />
+    );
   }
 
   if (view === 'practice-pronounce') {
